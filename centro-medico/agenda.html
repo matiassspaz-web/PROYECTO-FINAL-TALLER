@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centro Médico | Agenda</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+    <style>
+        :root{
+            --primary:#0ca175;
+            --primary-dark:#0ac989;
+            --primary-soft:#e8f9ee;
+            --accent:#0fc991;
+            --bg:#f6faf7;
+            --text:#173321;
+            --muted:#6f7f75;
+            --border:#e1ebe4;
+        }
+
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            background:var(--bg);
+            color:var(--text);
+            font-family:Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+        }
+
+        .navbar{
+            background:linear-gradient(135deg,#077e5a,#06865c) !important;
+            box-shadow:0 4px 22px rgba(18,184,79,.18);
+        }
+        .navbar-brand{letter-spacing:.2px}
+        .navbar .nav-link{
+            color:rgba(255,255,255,.9);
+            border-radius:10px;
+            padding:.55rem .75rem !important;
+            transition:.2s;
+        }
+        .navbar .nav-link:hover,.navbar .nav-link.active{
+            color:#fff;
+            background:rgba(255,255,255,.12);
+        }
+        .navbar .nav-link.text-warning{color:#000000 !important}
+
+        .page-header{padding-top:2.2rem}
+        .eyebrow{
+            color:#0c9169;
+            font-size:.78rem;
+            font-weight:800;
+            text-transform:uppercase;
+            letter-spacing:.12em;
+        }
+        h1{color:#163b48}
+        .subtitle{color:var(--muted)}
+
+        .btn-primary{
+            --bs-btn-bg:var(--primary);
+            --bs-btn-border-color:var(--primary);
+            --bs-btn-hover-bg:var(--primary-dark);
+            --bs-btn-hover-border-color:var(--primary-dark);
+            border-radius:11px;
+            font-weight:700;
+            box-shadow:0 6px 14px rgba(18,184,79,.20);
+        }
+        .btn-outline-secondary{border-radius:11px}
+
+        .panel{
+            background:#fff;
+            border:1px solid var(--border);
+            border-radius:18px;
+            box-shadow:0 10px 30px rgba(28,65,78,.07);
+        }
+        .filter-panel{padding:1.2rem}
+        .form-label{font-size:.84rem;color:#47616b;margin-bottom:.4rem}
+        .form-select,.form-control{
+            min-height:46px;
+            border-color:#dbe6ea;
+            border-radius:11px;
+        }
+        .form-select:focus,.form-control:focus{
+            border-color:#0bb18d;
+            box-shadow:0 0 0 .2rem rgba(39,168,154,.12);
+        }
+
+        .summary-card{
+            border:1px solid var(--border);
+            background:#fff;
+            border-radius:16px;
+            padding:1rem;
+            height:100%;
+        }
+        .summary-icon{
+            width:42px;height:42px;border-radius:12px;
+            display:grid;place-items:center;
+            background:var(--primary-soft);color:#07963f;font-size:1.2rem;
+        }
+        .summary-number{font-size:1.45rem;font-weight:800;color:#18323d}
+        .summary-label{font-size:.78rem;color:var(--muted)}
+
+        .agenda-panel{overflow:hidden}
+        .agenda-top{
+            padding:1.25rem 1.35rem;
+            border-bottom:1px solid var(--border);
+            background:linear-gradient(180deg,#fff,#fbfdfe);
+        }
+        .doctor-avatar{
+            width:48px;height:48px;border-radius:14px;
+            display:grid;place-items:center;
+            background:linear-gradient(135deg,#ddf8e7,#c9f3d7);
+            color:#058f61;
+            font-size:1.25rem;
+        }
+        .legend-dot{
+            display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:5px;
+        }
+        .dot-busy{background:#04916d}
+        .dot-free{background:#dce6df}
+
+        .table-wrap{overflow:auto}
+        .agenda-table{
+            min-width:850px;
+            margin:0;
+            border-collapse:separate;
+            border-spacing:0;
+        }
+        .agenda-table th,.agenda-table td{
+            border-right:1px solid var(--border);
+            border-bottom:1px solid var(--border);
+        }
+        .agenda-table thead th{
+            background:#f7fafb;
+            color:#55707b;
+            font-size:.78rem;
+            text-transform:uppercase;
+            letter-spacing:.04em;
+            padding:1rem .7rem;
+            position:sticky;
+            top:0;
+            z-index:2;
+        }
+        .agenda-table thead th:first-child{z-index:3}
+        .agenda-table tbody th{
+            width:90px;
+            background:#fbfcfd;
+            color:#607780;
+            font-size:.83rem;
+            font-weight:700;
+            padding:.9rem;
+            position:sticky;
+            left:0;
+            z-index:1;
+        }
+        .agenda-table td{
+            height:84px;
+            padding:.45rem;
+            background:#fff;
+            vertical-align:middle;
+        }
+        .day-date{display:block;font-size:1rem;color:#193b47;text-transform:none;letter-spacing:0}
+        .day-name{font-size:.72rem}
+        .today{color:var(--primary) !important}
+        .today-badge{
+            display:inline-block;
+            font-size:.62rem;
+            background:#e5f6f3;
+            color:#108577;
+            border-radius:999px;
+            padding:.16rem .45rem;
+            margin-top:.25rem;
+        }
+
+        .slot{
+            width:100%;
+            min-height:58px;
+            border:1px solid #bce8ca;
+            background:linear-gradient(135deg,#effcf3,#e2f8e9);
+            color:#03bd85;
+            border-radius:11px;
+            padding:.55rem .65rem;
+            text-align:left;
+            cursor:pointer;
+            transition:.18s;
+        }
+        .slot:hover{
+            transform:translateY(-2px);
+            box-shadow:0 7px 15px rgba(16, 124, 97, 0.12);
+        }
+        .slot strong{display:block;font-size:.82rem}
+        .slot small{display:block;color:#1c9c7c;margin-top:2px}
+        .free-slot{
+            min-height:58px;
+            width:100%;
+            border:1px dashed #d5e1e5;
+            background:#fbfdfe;
+            color:#a0afb5;
+            border-radius:11px;
+            display:grid;
+            place-items:center;
+            cursor:pointer;
+            transition:.18s;
+        }
+        .free-slot:hover{
+            background:#effbf3;
+            border-color:#0aa06e;
+            color:#07b37f8e;
+        }
+
+        footer{
+            background:#068d59 !important;
+            color:rgba(255,255,255,.72) !important;
+        }
+
+        .mobile-agenda{display:none}
+
+        @media(max-width:767px){
+            body{font-size:.94rem}
+            .page-header{padding-top:1.15rem}
+            .page-header h1{font-size:1.8rem}
+            .subtitle{font-size:.9rem}
+            .filter-panel{padding:.9rem}
+            .panel{border-radius:15px}
+            .summary-card{padding:.85rem}
+            .summary-number{font-size:1.25rem}
+            .summary-label{font-size:.72rem}
+            .agenda-top{padding:1rem}
+            .agenda-table-wrap{display:none}
+            .mobile-agenda{display:block;padding:.85rem}
+            .mobile-day{
+                border:1px solid var(--border);
+                border-radius:15px;
+                background:#fff;
+                overflow:hidden;
+                margin-bottom:.8rem;
+                box-shadow:0 5px 16px rgba(25,70,42,.05);
+            }
+            .mobile-day-header{
+                padding:.8rem .9rem;
+                background:#f5fbf7;
+                border-bottom:1px solid var(--border);
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+            }
+            .mobile-day-name{font-weight:800;color:#1a3b26}
+            .mobile-day-date{font-size:.78rem;color:var(--muted)}
+            .mobile-slot{
+                display:flex;
+                align-items:center;
+                gap:.75rem;
+                padding:.7rem .75rem;
+                border-bottom:1px solid #edf2ee;
+            }
+            .mobile-slot:last-child{border-bottom:0}
+            .mobile-time{
+                min-width:52px;
+                font-size:.76rem;
+                font-weight:800;
+                color:#557060;
+            }
+            .mobile-slot .slot,.mobile-slot .free-slot{
+                min-height:48px;
+                flex:1;
+            }
+            .mobile-slot .slot{padding:.45rem .6rem}
+            .mobile-slot .slot strong{font-size:.8rem}
+            .mobile-slot .slot small{font-size:.68rem}
+            .mobile-slot .free-slot{min-height:45px}
+            .legend-mobile{font-size:.75rem}
+            .btn{min-height:44px}
+        }
+
+        @media(max-width:430px){
+            .container{padding-left:12px;padding-right:12px}
+            .summary-card{border-radius:13px}
+            .summary-icon{width:36px;height:36px;font-size:1rem}
+            .mobile-day-header{padding:.7rem}
+            .mobile-slot{padding:.62rem}
+            .doctor-avatar{width:42px;height:42px}
+            .agenda-top h2{font-size:1rem}
+        }
+    </style>
+</head>
+
+<body>
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="dashboard.html">
+            <i class="bi bi-heart-pulse-fill me-2"></i>Centro Médico
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menuPrincipal"
+                aria-controls="menuPrincipal" aria-expanded="false" aria-label="Abrir menú">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="menuPrincipal">
+            <ul class="navbar-nav ms-auto">
+                <li class="nav-item"><a class="nav-link" href="dashboard.html">Inicio</a></li>
+                <li class="nav-item"><a class="nav-link" href="pacientes.html">Pacientes</a></li>
+                <li class="nav-item"><a class="nav-link" href="profesionales.html">Profesionales</a></li>
+                <li class="nav-item"><a class="nav-link" href="especialidades.html">Especialidades</a></li>
+                <li class="nav-item"><a class="nav-link" href="turnos.html">Turnos</a></li>
+                <li class="nav-item"><a class="nav-link active" href="agenda.html">Agenda</a></li>
+                <li class="nav-item"><a class="nav-link" href="historia-clinica.html">Historia Clínica</a></li>
+                <li class="nav-item"><a class="nav-link text-warning" href="index.html">Cerrar sesión</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<main class="container page-header pb-5">
+    <div class="d-flex justify-content-between align-items-end mb-4 flex-wrap gap-3">
+        <div>
+            <div class="eyebrow mb-1">Gestión de turnos</div>
+            <h1 class="fw-bold mb-1">Agenda médica</h1>
+            <p class="subtitle mb-0">Organizá y consultá los turnos de cada profesional.</p>
+        </div>
+        <a href="turnos.html" class="btn btn-primary px-4 py-2">
+            <i class="bi bi-plus-lg me-1"></i> Nuevo turno
+        </a>
+    </div>
+
+    <section class="panel filter-panel mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-12 col-md-5 col-lg-4">
+                <label for="agendaProfesional" class="form-label fw-semibold">Profesional</label>
+                <select id="agendaProfesional" class="form-select">
+                    <option value="leiva" selected>Dr. Leiva Omar · Cirugía Cardiovascular</option>
+                    <option value="chalon">Dra. Chalon Milagros · Clínica Médica</option>
+                    <option value="alderete">Dr. Alderete Lukas · Cardiología</option>
+                </select>
+            </div>
+
+            <div class="col-12 col-md-4 col-lg-3">
+                <label for="agendaSemana" class="form-label fw-semibold">Semana</label>
+                <input type="date" id="agendaSemana" class="form-control">
+            </div>
+
+            <div class="col-12 col-md-3 col-lg-2">
+                <button type="button" id="btnHoy" class="btn btn-outline-secondary w-100">
+                    <i class="bi bi-calendar2-check me-1"></i> Hoy
+                </button>
+            </div>
+
+            <div class="col-12 col-lg-3">
+                <button type="button" id="btnVerAgenda" class="btn btn-primary w-100">
+                    <i class="bi bi-search me-1"></i> Ver agenda
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="row g-3 mb-4">
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div><div class="summary-number" id="totalTurnos">7</div><div class="summary-label">Turnos de la semana</div></div>
+                    <div class="summary-icon"><i class="bi bi-calendar2-week"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div><div class="summary-number" id="turnosHoy">2</div><div class="summary-label">Turnos de hoy</div></div>
+                    <div class="summary-icon"><i class="bi bi-calendar-day"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div><div class="summary-number" id="horariosLibres">23</div><div class="summary-label">Horarios libres</div></div>
+                    <div class="summary-icon"><i class="bi bi-clock"></i></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-lg-3">
+            <div class="summary-card">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div><div class="summary-number">100%</div><div class="summary-label">Agenda disponible</div></div>
+                    <div class="summary-icon"><i class="bi bi-activity"></i></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="panel agenda-panel">
+        <div class="agenda-top d-flex justify-content-between align-items-center flex-wrap gap-3">
+            <div class="d-flex align-items-center gap-3">
+                <div class="doctor-avatar"><i class="bi bi-person-badge"></i></div>
+                <div>
+                    <h2 class="h5 fw-bold mb-1" id="doctorTitle">Dr. Leiva Omar</h2>
+                    <div class="small text-muted" id="doctorSpecialty">Cirugía Cardiovascular</div>
+                </div>
+            </div>
+            <div class="small text-muted">
+                <span class="me-3"><span class="legend-dot dot-busy"></span>Ocupado</span>
+                <span><span class="legend-dot dot-free"></span>Libre</span>
+            </div>
+        </div>
+
+        <div class="table-wrap agenda-table-wrap">
+            <table class="table agenda-table text-center align-middle mb-0">
+                <thead>
+                    <tr>
+                        <th>Horario</th>
+                        <th id="day-0"></th>
+                        <th id="day-1"></th>
+                        <th id="day-2"></th>
+                        <th id="day-3"></th>
+                        <th id="day-4"></th>
+                    </tr>
+                </thead>
+                <tbody id="agendaBody"></tbody>
+            </table>
+        </div>
+        <div id="mobileAgenda" class="mobile-agenda"></div>
+    </section>
+</main>
+
+<footer class="text-center py-3">
+    <small>Centro Médico · Sistema de Gestión</small>
+</footer>
+
+<div class="modal fade" id="turnoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius:18px;overflow:hidden">
+            <div class="modal-header border-0">
+                <h5 class="modal-title fw-bold"><i class="bi bi-calendar2-plus me-2"></i>Detalle del turno</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+            </div>
+            <div class="modal-body pt-0" id="modalContent"></div>
+            <div class="modal-footer border-0">
+                <a href="turnos.html" class="btn btn-primary"><i class="bi bi-pencil me-1"></i> Gestionar turno</a>
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const horarios = ["08:00","09:00","10:00","11:00","16:00","17:00"];
+
+    const profesionales = {
+        leiva: {
+            nombre: "Dr. Leiva Omar",
+            especialidad: "Cirugía Cardiovascular",
+            turnos: {
+               
+            }
+        },
+        chalon: {
+            nombre: "Dra. Chalon Milagros",
+            especialidad: "Clínica Médica",
+            turnos: {
+                
+            }
+        },
+        alderete: {
+            nombre: "Dr. Alderete Lukas",
+            especialidad: "Cardiología",
+            turnos: {
+                
+            }
+        }
+    };
+
+    const fechaInput = document.getElementById("agendaSemana");
+    const agendaBody = document.getElementById("agendaBody");
+
+    function formatearFecha(fecha){
+        return fecha.toLocaleDateString("es-AR",{day:"2-digit",month:"2-digit"});
+    }
+
+    function nombreDia(fecha){
+        return fecha.toLocaleDateString("es-AR",{weekday:"long"}).replace(/^./,c=>c.toUpperCase());
+    }
+
+    function lunesDe(fecha){
+        const d = new Date(fecha);
+        const dia = d.getDay();
+        const diferencia = dia === 0 ? -6 : 1 - dia;
+        d.setDate(d.getDate()+diferencia);
+        d.setHours(0,0,0,0);
+        return d;
+    }
+
+    function fechaLocalISO(fecha){
+        const y=fecha.getFullYear();
+        const m=String(fecha.getMonth()+1).padStart(2,"0");
+        const d=String(fecha.getDate()).padStart(2,"0");
+        return `${y}-${m}-${d}`;
+    }
+
+    function renderAgenda(){
+        const profesional = profesionales[document.getElementById("agendaProfesional").value];
+        const fechaSeleccionada = new Date(`${fechaInput.value}T12:00:00`);
+        const lunes = lunesDe(fechaSeleccionada);
+
+        document.getElementById("doctorTitle").textContent = profesional.nombre;
+        document.getElementById("doctorSpecialty").textContent = profesional.especialidad;
+
+        const nombresDias = [];
+        for(let i=0;i<5;i++){
+            const dia = new Date(lunes);
+            dia.setDate(lunes.getDate()+i);
+            nombresDias.push(dia);
+
+            const th = document.getElementById(`day-${i}`);
+            const hoy = fechaLocalISO(dia) === fechaLocalISO(new Date());
+            th.innerHTML = `<span class="day-name">${nombreDia(dia)}</span>
+                            <span class="day-date">${formatearFecha(dia)}</span>
+                            ${hoy ? '<span class="today-badge">HOY</span>' : ''}`;
+            if(hoy) th.classList.add("today"); else th.classList.remove("today");
+        }
+
+        agendaBody.innerHTML = "";
+        const mobileAgenda = document.getElementById("mobileAgenda");
+        mobileAgenda.innerHTML = "";
+        let total=0;
+
+        horarios.forEach(hora=>{
+            const tr=document.createElement("tr");
+            tr.innerHTML=`<th>${hora}</th>`;
+
+            for(let dia=0;dia<5;dia++){
+                const td=document.createElement("td");
+                const paciente=profesional.turnos[`${dia}-${hora}`];
+
+                if(paciente){
+                    total++;
+                    const button=document.createElement("button");
+                    button.className="slot";
+                    button.innerHTML=`<strong>${paciente}</strong><small><i class="bi bi-clock me-1"></i>${hora} · Confirmado</small>`;
+                    button.addEventListener("click",()=>mostrarTurno(paciente,hora,dia,lunes,profesional));
+                    td.appendChild(button);
+                }else{
+                    const button=document.createElement("button");
+                    button.className="free-slot";
+                    button.innerHTML='<i class="bi bi-plus-lg"></i><span class="visually-hidden">Agregar turno</span>';
+                    button.addEventListener("click",()=>nuevoTurno(hora,dia,lunes));
+                    td.appendChild(button);
+                }
+                tr.appendChild(td);
+            }
+            agendaBody.appendChild(tr);
+        });
+
+        // Vista móvil: cada día se convierte en una tarjeta vertical.
+        nombresDias.forEach((fecha,dia)=>{
+            const dayCard=document.createElement("div");
+            dayCard.className="mobile-day";
+            const hoy=fechaLocalISO(fecha)===fechaLocalISO(new Date());
+
+            dayCard.innerHTML=`
+                <div class="mobile-day-header">
+                    <div>
+                        <div class="mobile-day-name">${nombreDia(fecha)} ${hoy ? '<span class="today-badge ms-1">HOY</span>' : ''}</div>
+                        <div class="mobile-day-date">${formatearFecha(fecha)}</div>
+                    </div>
+                    <i class="bi bi-calendar3 text-success"></i>
+                </div>`;
+
+            horarios.forEach(hora=>{
+                const row=document.createElement("div");
+                row.className="mobile-slot";
+                row.innerHTML=`<div class="mobile-time">${hora}</div>`;
+
+                const paciente=profesional.turnos[`${dia}-${hora}`];
+                if(paciente){
+                    const button=document.createElement("button");
+                    button.className="slot";
+                    button.innerHTML=`<strong>${paciente}</strong><small><i class="bi bi-check-circle me-1"></i>Turno confirmado</small>`;
+                    button.addEventListener("click",()=>mostrarTurno(paciente,hora,dia,lunes,profesional));
+                    row.appendChild(button);
+                }else{
+                    const button=document.createElement("button");
+                    button.className="free-slot";
+                    button.innerHTML='<i class="bi bi-plus-lg me-1"></i>Disponible';
+                    button.addEventListener("click",()=>nuevoTurno(hora,dia,lunes));
+                    row.appendChild(button);
+                }
+                dayCard.appendChild(row);
+            });
+            mobileAgenda.appendChild(dayCard);
+        });
+
+        document.getElementById("totalTurnos").textContent=total;
+        document.getElementById("horariosLibres").textContent=(horarios.length*5)-total;
+
+        const hoyIndex = Math.floor((new Date()-lunes)/86400000);
+        let hoyTurnos=0;
+        if(hoyIndex>=0 && hoyIndex<5){
+            horarios.forEach(h=>{ if(profesional.turnos[`${hoyIndex}-${h}`]) hoyTurnos++; });
+        }
+        document.getElementById("turnosHoy").textContent=hoyTurnos;
+    }
+
+    function mostrarTurno(paciente,hora,dia,lunes,profesional){
+        const fecha=new Date(lunes);
+        fecha.setDate(lunes.getDate()+dia);
+        document.getElementById("modalContent").innerHTML=`
+            <div class="p-3 rounded-3" style="background:#f2fbf5">
+                <div class="small text-muted mb-1">Paciente</div>
+                <div class="fw-bold fs-5 mb-3">${paciente}</div>
+                <div class="row g-3">
+                    <div class="col-6"><div class="small text-muted">Fecha</div><strong>${formatearFecha(fecha)}</strong></div>
+                    <div class="col-6"><div class="small text-muted">Horario</div><strong>${hora}</strong></div>
+                    <div class="col-12"><div class="small text-muted">Profesional</div><strong>${profesional.nombre}</strong><div class="small text-muted">${profesional.especialidad}</div></div>
+                </div>
+            </div>`;
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("turnoModal")).show();
+    }
+
+    function nuevoTurno(hora,dia,lunes){
+        const fecha=new Date(lunes);
+        fecha.setDate(lunes.getDate()+dia);
+        document.getElementById("modalContent").innerHTML=`
+            <div class="text-center py-3">
+                <div class="summary-icon mx-auto mb-3"><i class="bi bi-calendar2-plus"></i></div>
+                <h5 class="fw-bold">Horario disponible</h5>
+                <p class="text-muted mb-0">Podés crear un turno para el <strong>${formatearFecha(fecha)}</strong> a las <strong>${hora}</strong>.</p>
+            </div>`;
+        bootstrap.Modal.getOrCreateInstance(document.getElementById("turnoModal")).show();
+    }
+
+    document.getElementById("btnVerAgenda").addEventListener("click",renderAgenda);
+    document.getElementById("agendaProfesional").addEventListener("change",renderAgenda);
+    document.getElementById("btnHoy").addEventListener("click",()=>{
+        fechaInput.value=fechaLocalISO(new Date());
+        renderAgenda();
+    });
+
+    fechaInput.value=fechaLocalISO(new Date());
+    renderAgenda();
+</script>
+</body>
+</html>

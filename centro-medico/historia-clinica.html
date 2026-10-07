@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Historia Clínica</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f4f7f6;
+        }
+        
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #05a570;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1c8a60;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col">
+
+    <header class="bg-gradient-to-r from-teal-700 to-cyan-800 text-white shadow-md sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-white/10 p-2 rounded-lg backdrop-blur-sm">
+                    <i class="fa-solid fa-notes-medical text-2xl text-teal-200"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg leading-tight">Centro Medico <span class="text-teal-200"></span>
+                    </h1>
+                    <p class="text-xs text-teal-100">Historia Clínica</p>
+                </div>
+            </div>
+            
+
+            <div class="flex items-center space-x-3 bg-white/10 px-3 py-1.5 rounded-full border border-white/20">
+                <div class="w-8 h-8 rounded-full bg-teal-200 text-teal-800 flex items-center justify-center font-bold text-sm">
+                    LO
+                </div>
+                <div class="hidden sm:block text-right">
+                    <p class="text-xs font-semibold leading-none">Dr. Leiva Omar</p>
+                    <p class="text-[10px] text-teal-200 mt-0.5">Cirujano Cardiovascular / MP 4592</p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-grow w-full grid grid-cols-1 lg:grid-cols-12 gap-6">
+        
+
+        <aside class="lg:col-span-3 space-y-4">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-3 flex items-center justify-between">
+                    <span>Pacientes</span>
+                    <i class="fa-solid fa-users text-teal-600"></i>
+                </h2>
+                
+                <div class="space-y-2" id="patientList">
+
+                    <button onclick="selectPatient('ituarte')" id="btn-ituarte" class="patient-btn w-full text-left p-3 rounded-lg border border-teal-500 bg-teal-50/50 hover:bg-teal-50 transition-all flex items-center justify-between group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-teal-100 text-teal-700 flex items-center justify-center font-semibold text-sm group-hover:bg-teal-200">
+                                IL
+                            </div>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Ituarte Lukas</p>
+                                <p class="text-xs text-slate-500">32 años • HC-00482</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-teal-600 text-xs"></i>
+                    </button>
+                    <button onclick="selectPatient('alderete')" id="btn-alderete" class="patient-btn w-full text-left p-3 rounded-lg border border-slate-200 hover:border-teal-300 hover:bg-slate-50 transition-all flex items-center justify-between group">
+                        <div class="flex items-center space-x-3">
+                            <div class="w-10 h-10 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center font-semibold text-sm group-hover:bg-teal-100 group-hover:text-teal-700">
+                                AM
+                            </div>
+                            <div>
+                                <p class="font-semibold text-slate-800 text-sm">Alderete Matias</p>
+                                <p class="text-xs text-slate-500">24 años • HC-00519</p>
+                            </div>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-slate-400 group-hover:text-teal-600 text-xs"></i>
+                    </button>
+                </div>
+            </div>
+
+
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+                <h3 class="text-xs font-bold text-slate-400 uppercase mb-3">Ficha de Información</h3>
+                <div id="patientSummary" class="space-y-2 text-xs">
+                    <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                        <span class="text-slate-500">Nombre completo:</span>
+                        <span class="font-semibold text-slate-700" id="summaryName">Ituarte Lukas</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                        <span class="text-slate-500">Edad:</span>
+                        <span class="font-semibold text-slate-700" id="summaryAge">32 años</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                        <span class="text-slate-500">N° Historia Clínica:</span>
+                        <span class="font-semibold text-slate-700" id="summaryHc">HC-00482</span>
+                    </div>
+                    <div class="flex justify-between border-b border-slate-100 pb-1.5">
+                        <span class="text-slate-500">Grupo Sanguíneo:</span>
+                        <span class="font-semibold text-slate-700" id="summaryBlood">A+</span>
+                    </div>
+                    <div class="flex justify-between">
+                        <span class="text-slate-500">Alergias:</span>
+                        <span class="font-semibold text-red-600" id="summaryAllergies">Penicilina</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+
+        <section class="lg:col-span-9 space-y-6">
+            
+
+            <div class="flex border-b border-slate-200 bg-white px-4 pt-3 rounded-t-xl shadow-sm">
+                <button id="tab-form-btn" onclick="switchTab('form')" class="pb-3 px-4 font-medium text-sm border-b-2 border-teal-600 text-teal-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    <span>Registrar Nueva Atención</span>
+                </button>
+                <button id="tab-history-btn" onclick="switchTab('history')" class="pb-3 px-4 font-medium text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2">
+                    <i class="fa-solid fa-clock-rotate-left"></i>
+                    <span>Historial Cronológico (<span id="historyCount">2</span>)</span>
+                </button>
+            </div>
+
+            <div id="tab-form" class="bg-white rounded-b-xl shadow-sm border border-t-0 border-slate-200 p-6 space-y-6">
+                <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Nueva Atención Médica</h2>
+                        <p class="text-xs text-slate-500">Complete la información del paciente correspondiente a la consulta actual.</p>
+                    </div>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-teal-100 text-teal-800">
+                        Consulta Activa
+                    </span>
+                </div>
+
+                <form id="clinicalForm" onsubmit="saveConsultation(event)" class="space-y-5">
+                    
+                
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Fecha de Atención *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                    <i class="fa-regular fa-calendar"></i>
+                                </span>
+                                <input type="date" id="inputFecha" required class="w-full pl-10 pr-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Profesional *</label>
+                            <div class="relative">
+                                <span class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                                    <i class="fa-solid fa-user-md"></i>
+                                </span>
+                                <input type="text" id="inputProfesional" value="Doctor Leiva Omar" readonly class="w-full pl-10 pr-3 py-2 bg-slate-100 border border-slate-300 rounded-lg text-sm text-slate-700 font-medium cursor-not-allowed">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Motivo de consulta *</label>
+                        <input type="text" id="inputMotivo" placeholder="Ej: Dolor abdominal recurrente, Fiebre alta..." required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all">
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Síntomas *</label>
+                            <textarea id="inputSintomas" rows="3" placeholder="Detalle los síntomas presentados por el paciente..." required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Diagnóstico *</label>
+                            <textarea id="inputDiagnostico" rows="3" placeholder="Diagnóstico médico, observaciones clínicas principales..." required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Tratamiento *</label>
+                            <textarea id="inputTratamiento" rows="3" placeholder="Medicamentos recetados, posología o procedimientos..." required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all resize-none"></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-semibold text-slate-700 mb-1">Indicaciones *</label>
+                            <textarea id="inputIndicaciones" rows="3" placeholder="Pautas para el paciente, cuidados en hogar, dieta, etc..." required class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all resize-none"></textarea>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-700 mb-1">Observaciones</label>
+                        <textarea id="inputObservaciones" rows="2" placeholder="Notas adicionales o requerimiento de estudios de control..." class="w-full px-3 py-2 bg-slate-50 border border-slate-300 rounded-lg text-sm text-slate-800 focus:ring-2 focus:ring-teal-500 focus:bg-white focus:outline-none transition-all resize-none"></textarea>
+                    </div>
+
+                
+                    <div class="flex justify-end space-x-3 pt-4 border-t border-slate-100">
+                        <button type="reset" class="px-4 py-2 border border-slate-300 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-50 transition-colors">
+                            Limpiar Formulario
+                        </button>
+                        <button type="submit" class="px-5 py-2 bg-teal-600 hover:bg-teal-700 text-white font-medium text-sm rounded-lg shadow-sm transition-all flex items-center space-x-2">
+                            <i class="fa-solid fa-floppy-disk"></i>
+                            <span>Guardar Atención</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div id="tab-history" class="bg-white rounded-b-xl shadow-sm border border-t-0 border-slate-200 p-6 hidden">
+                <div class="flex justify-between items-center mb-6">
+                    <div>
+                        <h2 class="text-lg font-bold text-slate-800">Historial Médico Cronológico</h2>
+                        <p class="text-xs text-slate-500">Atenciones anteriores ordenadas de la más reciente a la más antigua.</p>
+                    </div>
+                    <div class="text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-lg border border-slate-200">
+                        Paciente: <strong class="text-slate-700" id="historyPatientTitle">Ituarte Lukas</strong>
+                    </div>
+                </div>
+
+                <div id="chronologicalList" class="relative border-l-2 border-teal-200 ml-4 space-y-6">
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+
+    <script>
+    
+        const patientsData = {
+            ituarte: {
+                name: "Ituarte Lukas",
+                age: "32 años",
+                hc: "HC-00482",
+                blood: "A+",
+                allergias: "Gatos",
+                records: [
+                    {
+                        fecha: "2026-10-01",
+                        profesional: "Doctor Leiva Omar",
+                        motivo: "Control de presión arterial y mareos leve",
+                        sintomas: "Cefalea frontal ocasional, leve mareo al levantarse rápidamente.",
+                        diagnostico: "Normotenso en consulta, probable mareo ortostático benigno.",
+                        tratamiento: "Hidratación adecuada. Dieta hiposódica preventiva.",
+                        observaciones: "Volver si los síntomas persisten por más de 7 días.",
+                        indicaciones: "Medición diaria de presión arterial por 1 semana (mañana y noche)."
+                    },
+                    {
+                        fecha: "2026-08-15",
+                        profesional: "Doctor Leiva Omar",
+                        motivo: "Cuadro gripal y congestión nasal",
+                        sintomas: "Congestión nasal, tos seca, febrícula (37.8°C) de 48 hs de evolución.",
+                        diagnostico: "Síndrome febril alto de vías aéreas superiores (Cuadro viral).",
+                        tratamiento: "Paracetamol 500mg c/8hs si presenta fiebre o dolor.",
+                        observaciones: "Reposo relativo por 48 horas.",
+                        indicaciones: "Abundante ingesta de líquidos, vaporizaciones de eucalipto."
+                    }
+                ]
+            },
+            alderete: {
+                name: "Alderete Matias",
+                age: "24 años",
+                hc: "HC-00519",
+                blood: "O+",
+                allergias: "Ninguna conocida",
+                records: [
+                    {
+                        fecha: "2026-09-20",
+                        profesional: "Doctor Leiva Omar",
+                        motivo: "Dolor en tobillo derecho tras actividad física",
+                        sintomas: "Edema leve en maleolo externo derecho, dolor a la palpación y pisada.",
+                        diagnostico: "Esguince de tobillo Grado I.",
+                        tratamiento: "Ibuprofeno 400mg cada 8 horas por 5 días con alimentos.",
+                        observaciones: "Evaluación en 10 días para alta médica deportiva.",
+                        indicaciones: "Aplicar hielo local 15 min 3 veces al día, vendaje elástico compresivo y reposo de actividad deportiva."
+                    }
+                ]
+            }
+        };
+
+        let currentPatientKey = 'ituarte';
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('inputFecha').value = today;
+            renderPatientData();
+        });
+
+        function selectPatient(key) {
+            currentPatientKey = key;
+
+            document.querySelectorAll('.patient-btn').forEach(btn => {
+                btn.classList.remove('border-teal-500', 'bg-teal-50/50');
+                btn.classList.add('border-slate-200');
+            });
+
+            const activeBtn = document.getElementById(`btn-${key}`);
+            activeBtn.classList.remove('border-slate-200');
+            activeBtn.classList.add('border-teal-500', 'bg-teal-50/50');
+
+            renderPatientData();
+        }
+
+
+        function renderPatientData() {
+            const patient = patientsData[currentPatientKey];
+
+
+            document.getElementById('summaryName').innerText = patient.name;
+            document.getElementById('summaryAge').innerText = patient.age;
+            document.getElementById('summaryHc').innerText = patient.hc;
+            document.getElementById('summaryBlood').innerText = patient.blood;
+            document.getElementById('summaryAllergies').innerText = patient.allergies;
+
+            document.getElementById('historyPatientTitle').innerText = patient.name;
+            document.getElementById('historyCount').innerText = patient.records.length;
+
+        
+            renderChronologicalHistory();
+        }
+
+        function renderChronologicalHistory() {
+            const listContainer = document.getElementById('chronologicalList');
+            const records = patientsData[currentPatientKey].records;
+
+            if (records.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="pl-6 text-slate-400 italic text-sm">
+                        No hay registros anteriores para este paciente.
+                    </div>
+                `;
+                return;
+            }
+
+
+            const sortedRecords = [...records].sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            let html = '';
+            sortedRecords.forEach((record, index) => {
+                html += `
+                <div class="relative pl-6 pb-2">
+                    <!-- Icono en el eje cronológico -->
+                    <div class="absolute -left-[17px] top-0 w-8 h-8 rounded-full bg-teal-600 text-white flex items-center justify-center text-xs shadow">
+                        <i class="fa-solid fa-stethoscope"></i>
+                    </div>
+
+                    <!-- Contenido de la consulta -->
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 space-y-3 hover:border-teal-300 transition-colors">
+                        <div class="flex flex-wrap justify-between items-center border-b border-slate-200 pb-2 gap-2">
+                            <div>
+                                <span class="text-xs font-bold text-teal-700 bg-teal-100 px-2 py-0.5 rounded">
+                                    <i class="fa-regular fa-calendar-alt mr-1"></i>${record.fecha}
+                                </span>
+                                <span class="text-xs font-medium text-slate-500 ml-2">
+                                    <i class="fa-solid fa-user-doctor mr-1"></i>${record.profesional}
+                                </span>
+                            </div>
+                            <span class="text-[11px] text-slate-400">Atención #${records.length - index}</span>
+                        </div>
+
+                        <div>
+                            <h4 class="text-sm font-bold text-slate-800">${record.motivo}</h4>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-100">
+                                <span class="font-semibold text-slate-600 block mb-1">
+                                    <i class="fa-solid fa-head-side-cough text-teal-600 mr-1"></i>Síntomas:
+                                </span>
+                                <p class="text-slate-700">${record.sintomas}</p>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-100">
+                                <span class="font-semibold text-slate-600 block mb-1">
+                                    <i class="fa-solid fa-microscope text-teal-600 mr-1"></i>Diagnóstico:
+                                </span>
+                                <p class="text-slate-700">${record.diagnostico}</p>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-100">
+                                <span class="font-semibold text-slate-600 block mb-1">
+                                    <i class="fa-solid fa-pills text-teal-600 mr-1"></i>Tratamiento:
+                                </span>
+                                <p class="text-slate-700">${record.tratamiento}</p>
+                            </div>
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-100">
+                                <span class="font-semibold text-slate-600 block mb-1">
+                                    <i class="fa-solid fa-clipboard-list text-teal-600 mr-1"></i>Indicaciones:
+                                </span>
+                                <p class="text-slate-700">${record.indicaciones}</p>
+                            </div>
+                        </div>
+
+                        ${record.observaciones ? `
+                        <div class="bg-amber-50/60 p-2.5 rounded-lg border border-amber-200/60 text-xs">
+                            <span class="font-semibold text-amber-800 block mb-0.5">
+                                <i class="fa-solid fa-circle-info mr-1"></i>Observaciones:
+                            </span>
+                            <p class="text-amber-900">${record.observaciones}</p>
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+                `;
+            });
+
+            listContainer.innerHTML = html;
+        }
+
+
+        function switchTab(tab) {
+            const formTab = document.getElementById('tab-form');
+            const historyTab = document.getElementById('tab-history');
+            const formBtn = document.getElementById('tab-form-btn');
+            const historyBtn = document.getElementById('tab-history-btn');
+
+            if (tab === 'form') {
+                formTab.classList.remove('hidden');
+                historyTab.classList.add('hidden');
+
+                formBtn.className = "pb-3 px-4 font-medium text-sm border-b-2 border-teal-600 text-teal-700 flex items-center space-x-2";
+                historyBtn.className = "pb-3 px-4 font-medium text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2";
+            } else {
+                formTab.classList.add('hidden');
+                historyTab.classList.remove('hidden');
+
+                historyBtn.className = "pb-3 px-4 font-medium text-sm border-b-2 border-teal-600 text-teal-700 flex items-center space-x-2";
+                formBtn.className = "pb-3 px-4 font-medium text-sm border-b-2 border-transparent text-slate-500 hover:text-slate-700 flex items-center space-x-2";
+            }
+        }
+        function saveConsultation(e) {
+            e.preventDefault();
+
+            const newRecord = {
+                fecha: document.getElementById('inputFecha').value,
+                profesional: document.getElementById('inputProfesional').value,
+                motivo: document.getElementById('inputMotivo').value,
+                sintomas: document.getElementById('inputSintomas').value,
+                diagnostico: document.getElementById('inputDiagnostico').value,
+                tratamiento: document.getElementById('inputTratamiento').value,
+                indicaciones: document.getElementById('inputIndicaciones').value,
+                observaciones: document.getElementById('inputObservaciones').value
+            };
+
+            patientsData[currentPatientKey].records.push(newRecord);
+            document.getElementById('inputMotivo').value = '';
+            document.getElementById('inputSintomas').value = '';
+            document.getElementById('inputDiagnostico').value = '';
+            document.getElementById('inputTratamiento').value = '';
+            document.getElementById('inputIndicaciones').value = '';
+            document.getElementById('inputObservaciones').value = '';
+
+        
+            renderPatientData();
+            switchTab('history');
+        }
+    </script>
+</body>
+</html>
